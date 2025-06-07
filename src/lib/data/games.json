@@ -1,0 +1,18 @@
+[
+  {
+    "id": "once-human",
+    "title": "Once Human",
+    "description": "Manibus-X0176, Мир-2, Улей Wagner. Регион: Красные Пески.",
+    "image": "/games/once-human.png",
+    "link": "https://discord.gg/7Gus6wKN",
+    "active": true
+  },
+  {
+    "id": "gta5rp",
+    "title": "GTA 5 RP — Paradise",
+    "description": "SANG | https://paradise-rp.ru — скоро неактуально.",
+    "image": "/games/gta5rp.jpg",
+    "link": "https://paradise-rp.ru",
+    "active": false
+  }
+]
