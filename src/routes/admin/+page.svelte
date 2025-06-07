@@ -1,90 +1,55 @@
 <script>
-  import games from '$lib/data/games.json';
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
 
-  let selectedGame = null;
-  let form = {
-    title: '',
-    description: '',
-    image: '',
-    link: '',
-    active: true
-  };
+  let games = writable([]);
 
-  function editGame(index) {
-    selectedGame = index;
-    Object.assign(form, games[index]);
-  }
-
-  function updateGame() {
-    if (selectedGame !== null) {
-      games[selectedGame] = { ...form };
-    }
-  }
+  onMount(async () => {
+    const res = await fetch('/games.json');
+    const data = await res.json();
+    games.set(data);
+  });
 
   function addGame() {
-    games.push({ ...form });
-    resetForm();
-  }
-
-  function resetForm() {
-    form = {
+    games.update(list => [...list, {
       title: '',
+      server: '',
       description: '',
-      image: '',
       link: '',
-      active: true
-    };
-    selectedGame = null;
+      status: 'актуальна',
+      image: ''
+    }]);
   }
 
-  function exportJSON() {
-    const blob = new Blob([JSON.stringify(games, null, 2)], {
-      type: 'application/json',
+  function deleteGame(index) {
+    games.update(list => {
+      list.splice(index, 1);
+      return list;
     });
-    const url = URL.createObjectURL(blob);
+  }
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'games.json';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
+  function saveChanges() {
+    games.subscribe(value => {
+      console.log('Сохранить в JSON:', JSON.stringify(value, null, 2));
+      alert("Сохранено (в консоль)");
+    })();
   }
 </script>
 
-<!-- Оставляем тот же стиль и HTML как раньше -->
+<h1 class="text-2xl font-bold mb-4">Редактор игр</h1>
 
-<main>
-  <h1>Редактор карточек игр</h1>
+<button class="bg-blue-600 text-white px-4 py-2 rounded mb-4" on:click={addGame}>➕ Добавить игру</button>
 
-  <div class="game-list">
-    {#each games as game, i}
-      <div class="game-item" on:click={() => editGame(i)}>
-        {game.title}
-      </div>
-    {/each}
+{#each $games as game, index}
+  <div class="border p-4 rounded mb-4 space-y-2 bg-gray-50">
+    <input class="w-full p-2 border" bind:value={game.title} placeholder="Название" />
+    <input class="w-full p-2 border" bind:value={game.server} placeholder="Сервер / Улей" />
+    <input class="w-full p-2 border" bind:value={game.status} placeholder="Статус (актуальна / неактуальна)" />
+    <textarea class="w-full p-2 border" bind:value={game.description} placeholder="Описание" />
+    <input class="w-full p-2 border" bind:value={game.link} placeholder="Ссылка на сайт / Discord" />
+    <input class="w-full p-2 border" bind:value={game.image} placeholder="URL картинки" />
+    <button class="bg-red-500 text-white px-3 py-1 rounded" on:click={() => deleteGame(index)}>❌ Удалить</button>
   </div>
+{/each}
 
-  <h2>{selectedGame === null ? 'Новая игра' : 'Редактировать игру'}</h2>
-
-  <input bind:value={form.title} placeholder="Название игры" />
-  <textarea bind:value={form.description} placeholder="Описание"></textarea>
-  <input bind:value={form.image} placeholder="Ссылка на изображение" />
-  <input bind:value={form.link} placeholder="Ссылка на игру/дискорд" />
-  <label>
-    <input type="checkbox" bind:checked={form.active} />
-    Игра активна
-  </label>
-  <br />
-  <button on:click={selectedGame === null ? addGame : updateGame}>
-    {selectedGame === null ? 'Добавить' : 'Сохранить'}
-  </button>
-  <button on:click={resetForm}>Очистить</button>
-
-  <hr style="margin: 2rem 0;" />
-
-  <button on:click={exportJSON}>📦 Скачать JSON</button>
-</main>
+<button class="bg-green-600 text-white px-4 py-2 rounded mt-4" on:click={saveChanges}>💾 Сохранить</button>
