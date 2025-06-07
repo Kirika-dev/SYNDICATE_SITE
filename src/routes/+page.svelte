@@ -22,19 +22,19 @@
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
-  header {
-    position: relative;
+  
+  
+   .video-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
-    background-image: url('/background-oncehuman.jpg');
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2rem;
+    object-fit: cover;
+    z-index: -1;
   }
+
+
   .overlay {
     position: absolute;
     top: 0; left: 0;
@@ -133,7 +133,10 @@
     <button class="cta-button">Как играть с нами</button>
   </a>
 </header>
-
+<video class="video-bg" autoplay muted loop playsinline>
+  <source src="/video/once-human-trailer.mp4" type="video/mp4" />
+  Ваш браузер не поддерживает видеофон.
+</video>
 <section id="live-streams">
   <h2>Сейчас в эфире</h2>
   <div class="streams">
